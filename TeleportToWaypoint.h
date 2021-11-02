@@ -424,5 +424,33 @@ namespace teleport
 
 		return params.ReturnValue;
 	}
+	void TeleportToMarker()
+	{
+		for (int li = 0; li < Readtard<DWORD>(Uworld + 0x140 + sizeof(PVOID)); ++li) {
+			DWORD_PTR levels = Readtard<uintptr_t>(Uworld + 0x140);
+			if (!levels) break;
 
+			DWORD_PTR level = Readtard<uintptr_t>(levels + li * sizeof(PVOID));
+
+			if (!level) std::cout << "Failed LEVEL\n";
+
+			auto lc = Readtard<DWORD>(level + offset_aactors + sizeof(PVOID));
+
+			DWORD_PTR AActorsLEVE = Readtard<uintptr_t>(level + offset_aactors);
+
+			for (int ai = 0; ai < lc; ++ai)
+			{
+				UObject* Acotr = Readtard<UObject*>(AActorsLEVE + ai * sizeof(PVOID));
+				//Get Name
+				if (Name.find("AthenaPlayerMarker") != std::string::npos)
+				{
+					auto Rootcomp = Readtard<uint64_t>(Acotr + 0x130);
+					auto Pos = Readtard<Vector3>(Rootcomp + 0x11C);
+					//im not sure if the part works lol but have fun
+					FHitResult xxxx;
+					K2_SetActorLocation(Acotr, Pos, false, true, &xxxx);
+				}
+			}
+		}
+	}
 }
